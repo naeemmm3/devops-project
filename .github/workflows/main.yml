@@ -1,5 +1,14 @@
-script: |
-  cd /home/blocksone/devops-project
-  git pull origin main
-  npm install
-  pm2 restart my-app
+name: CI Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
