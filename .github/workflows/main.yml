@@ -1,0 +1,23 @@
+name: Deploy App
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy to Local Machine
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: blocksone
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd ~/devops-project
+            git pull origin main
+            npm install
+            pm2 restart my-app
