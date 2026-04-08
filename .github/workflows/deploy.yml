@@ -1,4 +1,4 @@
-name: Deploy App
+name: Deploy Docker App
 
 on:
   push:
@@ -10,14 +10,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Connect and Deploy
+      - name: Deploy via SSH
         uses: appleboy/ssh-action@v0.1.6
         with:
           host: ${{ secrets.EC2_HOST }}
           username: blocksone
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd devops-project
+            cd /home/blocksone/devops-project
             git pull origin main
-            npm install
-            pm2 restart my-app
+            
+            docker stop my-container || true
+            docker rm my-container || true
+            
+            docker build -t devops-app .
+            docker run -d -p 3000:3000 --name my-container devops-app
